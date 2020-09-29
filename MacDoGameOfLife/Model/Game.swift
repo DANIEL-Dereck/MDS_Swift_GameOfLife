@@ -9,12 +9,14 @@
 import Foundation
 
 class Game {
-    var xMax: Int = 10
-    var yMax: Int = 10
+    var xMax: Int
+    var yMax: Int
     var age: Int = 0
     var world = [[Cell]]()
 
-    init() {
+    init(raws x : Int, columns y : Int) {
+        self.xMax = x
+        self.yMax = y
         generateNewWorld()
     }
     

@@ -8,7 +8,6 @@
 
 import Foundation
 
-var game:Game = Game()
-
+var game:Game = Game(raws: 10, columns: 20)
 game.play()
 
