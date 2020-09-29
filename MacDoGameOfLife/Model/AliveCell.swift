@@ -9,7 +9,7 @@
 import Foundation
 
 class AliveCell: Cell {
-    var aliveRules: [Int : Bool] = [0 : false, 1 : false, 2 : true, 3 : true, 4 : false, 5 : false, 6 : false, 7 : false]
+    var aliveRules: [Int : Bool] = [0 : false, 1 : false, 2 : true, 3 : true, 4 : false, 5 : false, 6 : false, 7 : false, 8 : false]
 
     override func sign() -> String {
         return "0"
