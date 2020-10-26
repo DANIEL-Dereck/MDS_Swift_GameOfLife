@@ -13,6 +13,7 @@ class Game {
     var yMax: Int
     var age: Int = 0
     var world = [[Cell]]()
+    var prevGen = [[Cell]]()
 
     init(raws x : Int, columns y : Int) {
         self.xMax = x
@@ -35,6 +36,7 @@ class Game {
     }
     
     func calculNextGen() {
+        prevGen = world
         var newWorld = [[Cell]]()
         
         for x in 0..<xMax {
@@ -50,13 +52,13 @@ class Game {
     
     func newCell(cell: Cell) -> Cell {
         if let aliveCell = cell as? AliveCell {
-            if aliveCell.isAlive(neighbours: calcNeighbourds(x: cell.x, y: cell.y)) {
+            if aliveCell.isAlive(neighbours: calcNeighbourdsFast(x: cell.x, y: cell.y)) {
                 return AliveCell(x:cell.x, y:cell.y)
             } else {
                 return DeadCell(x:cell.x, y:cell.y)
             }
         } else if let deadCell = cell as? DeadCell {
-            if deadCell.isAlive(neighbours: calcNeighbourds(x: cell.x, y: cell.y)) {
+            if deadCell.isAlive(neighbours: calcNeighbourdsFast(x: cell.x, y: cell.y)) {
                 return AliveCell(x:cell.x, y:cell.y)
             } else {
                 return DeadCell(x:cell.x, y:cell.y)
@@ -65,7 +67,33 @@ class Game {
         
         return Cell(x:cell.x, y:cell.y)
     }
+    
+    func calcNeighbourdsFast(x: Int, y: Int) -> Int {
+        var result = 0
+        for i in -1...1 {
+            for j in -1...1 {
+                if !(i == 0 && j == 0) {
+                    let neiX = x + i
+                    let neiY = y + j
+                    
+                    if neiX < 0 || neiY < 0 {
+                        continue
+                    }
+                    
+                    if neiX >= world.count || neiY >= world[0].count {
+                        continue
+                    }
 
+                    if world[neiX][neiY] is AliveCell {
+                        result += 1
+                    }
+                }
+            }
+        }
+        return result
+    }
+    
+    
     func calcNeighbourds(x: Int, y: Int) -> Int {
         var result : Int = 0
         
@@ -104,6 +132,22 @@ class Game {
         return result
     }
 
+    func isInfinitPattern() -> Bool
+    {
+        var result = true
+        
+        for x in world {
+            for y in x {
+                if (prevGen[y.x][y.y] is AliveCell && y is AliveCell)
+                || (prevGen[y.x][y.y] is DeadCell && y is DeadCell) {
+                    continue
+                }
+                result = false
+            }
+        }
+
+        return result
+    }
     
     func displayWord() {
         print("Génération \(age)")
@@ -121,6 +165,10 @@ class Game {
             displayWord()
             self.age += 1
             calculNextGen()
+            if isInfinitPattern() {
+                print("Infinit Static pattern")
+                return
+            }
             sleep(1)
         }
     }
